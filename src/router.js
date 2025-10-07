@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { playerValidation } from "./validation/player";
+import { playerValidation } from "./validation/player.js";
 
 const router = Router();
 
