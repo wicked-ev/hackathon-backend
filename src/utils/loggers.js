@@ -1,4 +1,4 @@
-import { blue, green } from "colorette";
+import { blue, green, red } from "colorette";
 
 
 export function requestLogger(req) {
@@ -8,4 +8,9 @@ export function requestLogger(req) {
     } else {
         console.log("body unidentified");
     }    
+}
+
+
+export function LogError(message) {
+    console.log(red(message));
 }
