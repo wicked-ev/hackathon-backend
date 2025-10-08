@@ -1,7 +1,7 @@
 import axios from "axios";
 import { LogError } from "../utils/loggers.js";
 // cSpell:disable
-function getRiotClient(region) {
+export function getRiotClient(region) {
   return axios.create({
     baseURL: `https://${region}.api.riotgames.com`,
     headers: {
@@ -57,18 +57,40 @@ export async function getPUUIDByRiotID(player) {
 }
 
 
-export function getMatchByPUUID(puuid,region) {
+export async function getMatchsByPUUID(puuid,region,params) {
+    console.log("get Matches calls Info");
+    console.log(`puuid ${puuid}`);
+    console.log(`region ${region}`);
+
     const client = getRiotClient(region);
     try {
-        const res = client.get(`/lol/match/v5/matches/by-puuid/${encodeURIComponent(puuid)}/ids`,{
-            
+        const res = await client.get(`/lol/match/v5/matches/by-puuid/${encodeURIComponent(puuid)}/ids`,{
+          params: params
         });
         if(res.data) {
             return res.data
         }
     } catch (error) {
        LogError("Error on getting match id: " + error.message); 
-       LogError("Error status: " + error.status); 
+       LogError("Error status: " + error.status);
+      //  LogError("Axios Error " + JSON.stringify(error.response, null, 2));
     }
 
+}
+
+
+export async function getMatchTimeStamp(matchID,region) {
+    const client = getRiotClient(region);
+    try {
+        console.log("match ID" + matchID);
+        const matchData = await client.get(`/lol/match/v5/matches/${encodeURIComponent(matchID)}`);
+        if(matchData.data && matchData.data.info.gameStartTimestamp) {
+          // console.log("match data");
+          // console.log(JSON.stringify(matchData.data, null, 2));
+          return matchData.data.info.gameStartTimestamp;
+        }
+    } catch (error) {
+      LogError("Error on getting match id: " + error.message); 
+      LogError("Error status: " + error.status);
+    }
 }
