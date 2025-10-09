@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { playerValidation } from "./validation/player.js";
-import { getMatchsByPUUID, getPUUIDByRiotID, regionMap } from "./services/player.js";
+import { getPUUIDByRiotID, regionMap } from "./services/player.js";
 import { fetchLastYearMatchIds } from "./services/stats.js";
 
 const router = Router();
@@ -17,14 +17,9 @@ router.post("/stats", async (req, res) => {
 
   const puuid = await getPUUIDByRiotID(player);
   console.log("puui: " + puuid);
+  
   fetchLastYearMatchIds(puuid,player.region);
-  //get PUUID  ACCOUNT-V1
-  // get Match history using PUUID
-  //how can i get one year of match history?
-  //use Match-V5 ,current time - one year = start time
-  //end time is current time
- 
-
+  console.log("done");
 
   res.send("OK");
 });
