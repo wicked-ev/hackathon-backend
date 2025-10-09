@@ -87,7 +87,23 @@ export async function getMatchTimeStamp(matchID,region) {
         if(matchData.data && matchData.data.info.gameStartTimestamp) {
           // console.log("match data");
           // console.log(JSON.stringify(matchData.data, null, 2));
-          return matchData.data.info.gameStartTimestamp;
+          return matchData.data.info.gameStartTimestamp / 1000;
+        }
+    } catch (error) {
+      LogError("Error on getting match id: " + error.message); 
+      LogError("Error status: " + error.status);
+    }
+}
+
+export async function getMatchData(matchID,region) {
+    const client = getRiotClient(region);
+    try {
+        console.log("match ID" + matchID);
+        const matchData = await client.get(`/lol/match/v5/matches/${encodeURIComponent(matchID)}`);
+        if(matchData.data) {
+          // console.log("match data");
+          // console.log(JSON.stringify(matchData.data, null, 2));
+          return matchData.data;
         }
     } catch (error) {
       LogError("Error on getting match id: " + error.message); 
