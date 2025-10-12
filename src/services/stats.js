@@ -9,6 +9,7 @@ import {
 import { JSONFile } from 'lowdb/node';
 
 import { Low } from "lowdb";
+import { match } from "assert";
 
 //remove when we have real storage system
 
@@ -22,16 +23,21 @@ const db = new Low(adapter, {players: {}});
 
 await db.read();
 
-async function getStats(player) {
-  const puuid = getPUUIDByRiotID(player);
-  if(fetchLastYearMatchIds(puuid, player.region)) {
+export async function getStats(player) {
+  const puuid = await getPUUIDByRiotID(player);
+  if(await fetchLastYearMatchIds(puuid, player.region)) {
     
     const savedMatchesIDs = db.data.players[puuid].yearMatchIDs;  
-    const gameStats =  {}
+    db.data.players[puuid].matchData = []; 
     for(let i of savedMatchesIDs) {
       const matchData = await getMatchData(i,player.region);
-      db.data.player[puuid].gameStats = matchData.info
-      await db.write();
+      const participants = matchData.info.participants
+      for(let participant of participants) {
+        if (participant.puuid == puuid) {
+          db.data.players[puuid].matchData.push(participant);
+          await db.write();
+        }
+      }    
     }
     //i don't feel like i have idea or direction 
     //way to check if we already fetched for this player (json file each as temp sol)
