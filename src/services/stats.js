@@ -9,11 +9,10 @@ import {
 import { JSONFile } from 'lowdb/node';
 
 import { Low } from "lowdb";
-import { match } from "assert";
 
 //remove when we have real storage system
 
-const storagePath = ["C:/Users/AURES/Documents/Hackthon-Storage/storage.json", "C:/Users/admin/Documents/storage.json"];
+const storagePath = process.env.TMP_STORAGE_PATH; 
 
 const dbFile = path.resolve(storagePath[0])
 
@@ -37,7 +36,8 @@ export async function getStats(player) {
           db.data.players[puuid].matchData.push(participant);
           await db.write();
         }
-      }    
+      }
+      await new Promise((res) => {setTimeout(res, 500)});  
     }
     //i don't feel like i have idea or direction 
     //way to check if we already fetched for this player (json file each as temp sol)
